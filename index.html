@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="#">
+      <label for="seach">Search: </label>
+      <input type="search" id="search" />
+      <button type="submit" id="searchbutton">Submit</button>
+    </form>
+    <button type="button" id="generatebutton">Get new image</button><br />
+    <img src="#" />
+    <script>
+      const form = document.querySelector("form");
+      const search = document.querySelector("#search");
+      const searchButton = document.querySelector("#searchbutton");
+      const generateCatButton = document.querySelector("#generatebutton");
+      const img = document.querySelector("img");
+
+      searchButton.addEventListener("click", getCatSearchResults);
+
+      generateCatButton.addEventListener("click", getOneCat);
+
+      async function getOneCat() {
+        const response = await fetch(
+          "https://api.giphy.com/v1/gifs/translate?api_key=2YH7TDRUxm4gCYXP4YSxmHfYSZQFJsJS&s=cats",
+          { mode: "cors" }
+        );
+        const catData = await response.json();
+        img.src = catData.data.images.original.url;
+      }
+
+      async function getCatSearchResults() {
+        const searchInput = search.value;
+        const url = `https://api.giphy.com/v1/gifs/search?api_key=2YH7TDRUxm4gCYXP4YSxmHfYSZQFJsJS&&q=${searchInput}`;
+
+        const response = await fetch(url, { mode: "cors" });
+        const searchResults = await response.json();
+        displaySearchResults(searchResults.data);
+      }
+
+      function displaySearchResults(array = []) {
+        if (array.length === 0) {
+          alert("No results found :(");
+        }
+        array.forEach((element) => {
+          const gif = document.createElement("img");
+          gif.src = element.images.fixed_height_small.url;
+          document.body.appendChild(gif);
+        });
+      }
+    </script>
+  </body>
+</html>
